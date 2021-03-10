@@ -25,15 +25,33 @@ defmodule Sales.SaleContext do
   end
 
   def create_order(attrs \\ %{}) do
-    %Order{}
-    |> Order.changeset(attrs)
-    |> Repo.insert()
+    Multi.new()
+    |> Multi.insert(:order, Order.changeset(%Order{}, attrs))
+    |> Multi.run(:product, &get_product_if_available/2)
+    |> Multi.run(:update_stock, &decrease_product_availability/2)
+    |> Repo.transaction()
     |> case do
-      {:ok, order} ->
+      {:ok, %{order: order}} ->
         {:ok, Repo.preload(order, :product)}
 
-      another ->
-        another
+      {:error, _, reason, _} ->
+        {:error, reason}
     end
+  end
+
+  defp get_product_if_available(_, %{order: %{product_id: product_id}}) do
+    case Repo.get(Product, product_id) do
+      %Product{quantity: 0} ->
+        {:error, :product_unavailable}
+
+      product = %Product{} ->
+        {:ok, product}
+    end
+  end
+
+  defp decrease_product_availability(_, %{product: product = %{quantity: quantity}}) do
+    product
+    |> Product.changeset(%{quantity: quantity - 1})
+    |> Repo.update()
   end
 end
