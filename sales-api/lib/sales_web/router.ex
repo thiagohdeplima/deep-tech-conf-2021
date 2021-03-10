@@ -3,6 +3,7 @@ defmodule SalesWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug SalesWeb.Jwks
   end
 
   scope "/api", SalesWeb do

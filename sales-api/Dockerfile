@@ -16,4 +16,4 @@ RUN mix deps.get \
 
 ENTRYPOINT [ "sh" ]
 
-CMD ["-c", "mix ecto.setup && mix phx.server"]
+CMD ["-c", "mix deps.get && mix ecto.setup && mix phx.server"]

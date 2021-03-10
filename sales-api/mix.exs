@@ -44,7 +44,9 @@ defmodule Sales.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
 
-      {:amqp, "~> 2.1"}
+      {:amqp, "~> 2.1"},
+      {:joken, "~> 2.0"},
+      {:tesla, "~> 1.4.0"},
     ]
   end
 

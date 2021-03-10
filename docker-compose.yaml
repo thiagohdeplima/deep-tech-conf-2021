@@ -56,6 +56,8 @@ services:
         MIX_ENV: dev
     ports:
     - 4000:4000
+    volumes:
+    - ./sales-api:/srv/app
     environment:
       PORT: 4000
       MIX_ENV: dev

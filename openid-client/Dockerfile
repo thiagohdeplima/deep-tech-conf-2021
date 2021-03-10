@@ -30,4 +30,4 @@ RUN mix deps.get \
 
 ENTRYPOINT [ "sh" ]
 
-CMD ["-c", "socat TCP-LISTEN:8080,fork TCP:keycloak:8080 & mix phx.server"]
+CMD ["-c", "socat TCP-LISTEN:8080,fork TCP:keycloak:8080 & mix deps.get && mix phx.server"]

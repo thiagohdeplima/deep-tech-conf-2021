@@ -15,7 +15,6 @@ config :openid_client,
     poc: [
       discovery_document_uri: "http://localhost:8080/auth/realms/master/.well-known/openid-configuration",
       client_id: "poc",
-      client_secret: "ddd8fd5e-b0b7-475f-adc4-968f5f20e814",
       redirect_uri: "http://localhost:5000/session",
       response_type: "code",
       scope: "openid roles"
