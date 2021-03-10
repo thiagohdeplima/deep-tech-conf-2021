@@ -7,6 +7,11 @@ services:
   database:
     networks:
     - application
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d appdb -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       POSTGRES_DB: appdb
       POSTGRES_USER: user
@@ -15,15 +20,34 @@ services:
   rabbitmq:
     networks:
     - application
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl list_users"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     ports:
     - "8083:15672"
     image: rabbitmq:3-management 
 
-  application:
+  payments-api:
     restart: unless-stopped
     depends_on:
-    - database
-    - rabbitmq
+      rabbitmq:
+        condition: service_healthy
+    networks:
+    - application
+    build:
+      context: 'payments-api'
+    environment:
+      AMQP_URL: amqp://guest:guest@rabbitmq
+
+  sales-api:
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
     - application
     build:
