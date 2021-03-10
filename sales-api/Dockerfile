@@ -14,4 +14,6 @@ RUN mix deps.get \
     && mix deps.compile \
     && mix compile
 
-CMD ["mix", "phx.server"]
+ENTRYPOINT [ "sh" ]
+
+CMD ["-c", "mix ecto.setup && mix phx.server"]

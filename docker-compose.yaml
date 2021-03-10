@@ -20,17 +20,21 @@ services:
     image: rabbitmq:3-management 
 
   application:
-    restart: always
+    restart: unless-stopped
     depends_on:
     - database
+    - rabbitmq
     networks:
     - application
     build:
       context: 'sales-api'
+      args:
+        MIX_ENV: dev
     ports:
     - 4000:4000
     environment:
       PORT: 4000
+      MIX_ENV: dev
       AMQP_URL: amqp://guest:guest@rabbitmq
       DATABASE_URL: postgres://user@database/appdb
       SECRET_KEY_BASE: bXZz7kBMHcsksqYHkcwfEkFtg33BGHB5SJw4rAZR
