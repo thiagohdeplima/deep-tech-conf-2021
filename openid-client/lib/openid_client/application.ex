@@ -12,9 +12,10 @@ defmodule OpenIDClient.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: OpenIDClient.PubSub},
       # Start the Endpoint (http/https)
-      OpenIDClientWeb.Endpoint
+      OpenIDClientWeb.Endpoint,
       # Start a worker by calling: OpenIDClient.Worker.start_link(arg)
-      # {OpenIDClient.Worker, arg}
+
+      {OpenIDConnect.Worker, Application.get_env(:openid_client, :openid_connect_providers)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

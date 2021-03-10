@@ -62,3 +62,38 @@ services:
       AMQP_URL: amqp://guest:guest@rabbitmq
       DATABASE_URL: postgres://user@database/appdb
       SECRET_KEY_BASE: bXZz7kBMHcsksqYHkcwfEkFtg33BGHB5SJw4rAZR
+
+  keycloak:
+    networks:
+    - application
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/auth/realms/master"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    ports:
+    - 8080:8080
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    image: quay.io/keycloak/keycloak:12.0.4
+
+  openid-client:
+    restart: unless-stopped
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    networks:
+    - application
+    build:
+      context: 'openid-client'
+      args:
+        MIX_ENV: dev
+    volumes:
+    - ./openid-client:/srv/app
+    ports:
+    - 5000:5000
+    environment:
+      PORT: 5000
+      MIX_ENV: dev
