@@ -64,7 +64,7 @@ defmodule Sales.SaleContext do
          {:ok, channel} <- AMQP.Application.get_channel(:channel),
          :ok <- AMQP.Basic.publish(channel, "events", "", json, type: "order:requested")
     do
-      Logger.info("EVENT: order:requested #{order.id} ")
+      Logger.info("EVENT: order:requested #{order.id}")
 
       {:ok, json}
     end
