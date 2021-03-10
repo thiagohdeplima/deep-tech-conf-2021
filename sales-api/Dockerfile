@@ -1,7 +1,7 @@
 FROM elixir:1.11-alpine
 
 ARG MIX_ENV=prod
-ENV MIX_ENV=${MIX_ENV}}
+ENV MIX_ENV=${MIX_ENV}
 
 WORKDIR /srv/app
 
