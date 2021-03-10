@@ -8,6 +8,9 @@ defmodule SalesWeb.Router do
   scope "/api", SalesWeb do
     pipe_through :api
 
+    get  "/orders", OrderController, :index
+    post "/orders", OrderController, :create
+
     get "/products", ProductController, :index
   end
 end

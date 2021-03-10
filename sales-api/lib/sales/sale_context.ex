@@ -6,18 +6,34 @@ defmodule Sales.SaleContext do
   import Ecto.Query, warn: false
   alias Sales.Repo
 
+  alias Ecto.Multi
+
+  alias Sales.SaleContext.Order
   alias Sales.SaleContext.Product
 
-  @doc """
-  Returns the list of products.
-
-  ## Examples
-
-      iex> list_products()
-      [%Product{}, ...]
-
-  """
   def list_products do
-    Repo.all(Product)
+    Product
+    |> Repo.all()
+  end
+
+  def list_orders do
+    Order
+    |> Repo.all()
+    |> Enum.map(fn order ->
+      Repo.preload(order, :product)
+    end)
+  end
+
+  def create_order(attrs \\ %{}) do
+    %Order{}
+    |> Order.changeset(attrs)
+    |> Repo.insert()
+    |> case do
+      {:ok, order} ->
+        {:ok, Repo.preload(order, :product)}
+
+      another ->
+        another
+    end
   end
 end
