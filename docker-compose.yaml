@@ -1,0 +1,28 @@
+version: "3.4"
+
+networks:
+  application: {}
+
+services:
+  database:
+    networks:
+    - application
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: user
+    image: postgres:11.2-alpine
+
+  application:
+    depends_on:
+    - database
+    networks:
+    - application
+    build:
+      context: 'sales-api'
+    ports:
+    - 4000:4000
+    environment:
+      PORT: 4000
+      MIX_ENV: prod
+      DATABASE_URL: postgres://user@database/appdb
+      SECRET_KEY_BASE: bXZz7kBMHcsksqYHkcwfEkFtg33BGHB5SJw4rAZR
