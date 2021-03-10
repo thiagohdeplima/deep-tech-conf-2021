@@ -19,6 +19,8 @@ defmodule Sales.Application do
       # {Sales.Worker, arg}
     ]
 
+    amqp()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Sales.Supervisor]
@@ -30,5 +32,19 @@ defmodule Sales.Application do
   def config_change(changed, _new, removed) do
     SalesWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp amqp do
+    {:ok, channel} = AMQP.Application.get_channel(:channel)
+
+    {:ok, _} = AMQP.Queue.declare(channel, "sales-api")
+    {:ok, _} = AMQP.Queue.declare(channel, "payments-api")
+    {:ok, _} = AMQP.Queue.declare(channel, "delivery-api")
+
+    AMQP.Exchange.declare(channel, "events", :fanout, durable: true)
+
+    AMQP.Queue.bind(channel, "sales-api", "events")
+    AMQP.Queue.bind(channel, "payments-api", "events")
+    AMQP.Queue.bind(channel, "delivery-api", "events")
   end
 end
