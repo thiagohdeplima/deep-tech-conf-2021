@@ -5,6 +5,9 @@ defmodule Sales.SaleContext.Product do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "products" do
+    field :name,     :string
+    field :price,    :integer
+    field :quantity, :integer
 
     timestamps()
   end
@@ -12,7 +15,7 @@ defmodule Sales.SaleContext.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:name, :price, :quantity])
+    |> validate_required([:name, :price, :quantity])
   end
 end

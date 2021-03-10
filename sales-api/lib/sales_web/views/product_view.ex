@@ -3,7 +3,9 @@ defmodule SalesWeb.ProductView do
   alias SalesWeb.ProductView
 
   def render("index.json", %{products: products}) do
-    %{data: render_many(products, ProductView, "product.json")}
+    %{
+      entries: render_many(products, ProductView, "product.json")
+    }
   end
 
   def render("show.json", %{product: product}) do
@@ -11,6 +13,11 @@ defmodule SalesWeb.ProductView do
   end
 
   def render("product.json", %{product: product}) do
-    %{id: product.id}
+    %{
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: product.quantity
+    }
   end
 end
