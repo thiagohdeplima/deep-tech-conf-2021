@@ -62,7 +62,7 @@ defmodule Sales.SaleContext do
     with order = %Order{} <- Repo.preload(order, :product),
          {:ok, json} <- Jason.encode(order),
          {:ok, channel} <- AMQP.Application.get_channel(:channel),
-         :ok <- AMQP.Basic.publish(channel, "events", "", json)
+         :ok <- AMQP.Basic.publish(channel, "events", "", json, type: "order:requested")
     do
       Logger.info("EVENT: order:requested #{order.id} ")
 
