@@ -3,6 +3,8 @@ defmodule Sales.SaleContext do
   The SaleContext context.
   """
 
+  require Logger
+
   import Ecto.Query, warn: false
   alias Sales.Repo
 
@@ -62,6 +64,8 @@ defmodule Sales.SaleContext do
          {:ok, channel} <- AMQP.Application.get_channel(:channel),
          :ok <- AMQP.Basic.publish(channel, "events", "", json)
     do
+      Logger.info("EVENT: order:requested #{order.id} ")
+
       {:ok, json}
     end
   end
