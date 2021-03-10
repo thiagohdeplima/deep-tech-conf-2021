@@ -29,6 +29,7 @@ defmodule Sales.SaleContext do
     |> Multi.insert(:order, Order.changeset(%Order{}, attrs))
     |> Multi.run(:product, &get_product_if_available/2)
     |> Multi.run(:update_stock, &decrease_product_availability/2)
+    |> Multi.run(:event, &publish_event/2)
     |> Repo.transaction()
     |> case do
       {:ok, %{order: order}} ->
@@ -53,5 +54,15 @@ defmodule Sales.SaleContext do
     product
     |> Product.changeset(%{quantity: quantity - 1})
     |> Repo.update()
+  end
+
+  defp publish_event(_, %{order: order}) do
+    with order = %Order{} <- Repo.preload(order, :product),
+         {:ok, json} <- Jason.encode(order),
+         {:ok, channel} <- AMQP.Application.get_channel(:channel),
+         :ok <- AMQP.Basic.publish(channel, "events", "", json)
+    do
+      {:ok, json}
+    end
   end
 end

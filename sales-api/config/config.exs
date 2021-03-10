@@ -27,6 +27,19 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :logger,
+  handle_otp_reports: false
+
+config :amqp,
+  connections: [
+    conn: [
+      url: System.get_env("AMQP_URL")
+    ],
+  ],
+  channels: [
+    channel: [connection: :conn]
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

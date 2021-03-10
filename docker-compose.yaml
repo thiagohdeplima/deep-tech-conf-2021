@@ -12,7 +12,15 @@ services:
       POSTGRES_USER: user
     image: postgres:11.2-alpine
 
+  rabbitmq:
+    networks:
+    - application
+    ports:
+    - "8083:15672"
+    image: rabbitmq:3-management 
+
   application:
+    restart: always
     depends_on:
     - database
     networks:
@@ -23,6 +31,6 @@ services:
     - 4000:4000
     environment:
       PORT: 4000
-      MIX_ENV: prod
+      AMQP_URL: amqp://guest:guest@rabbitmq
       DATABASE_URL: postgres://user@database/appdb
       SECRET_KEY_BASE: bXZz7kBMHcsksqYHkcwfEkFtg33BGHB5SJw4rAZR
